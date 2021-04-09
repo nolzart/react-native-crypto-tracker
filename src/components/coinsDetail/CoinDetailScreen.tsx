@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { View, Text, Image, StyleSheet, SectionList, FlatList } from 'react-native'
+import { View, Text, Image, StyleSheet, SectionList, FlatList, ActivityIndicator } from 'react-native'
 import { RouteProp } from '@react-navigation/native'
 import { StackNavigationProp } from '@react-navigation/stack'
 
@@ -31,13 +31,16 @@ type SectionListItem = {
 const CoinDetailScreen: React.FC<Props> = (props) => {
     const [coin, setCoin] = useState<ICrypto | null>(null)
     const [markets, setMarkets] = useState<Array<IMarket> | null>(null)
+    const [loading, setLoading] = useState<boolean>(false)
 
     useEffect(() => {
         const { coin } = props.route.params
         props.navigation.setOptions({ title: coin.symbol })
         setCoin(coin)
-
-        const fetchData = async () => getMarkets(coin.id)
+        const fetchData = async () => {
+            await getMarkets(coin.id)
+            setLoading(true)
+        }
 
         fetchData()
     }, [])
@@ -83,36 +86,44 @@ const CoinDetailScreen: React.FC<Props> = (props) => {
 
     return (
         <View style={styles.container}>
-            <View style={styles.subHeader}>
-                <Image 
-                    style={styles.img} 
-                    source={{ uri: getSymbolIcon(coin?.name || '') }}
-                />
-                <Text style={styles.titleText}> { coin?.name } </Text>
-            </View>
-            <SectionList
-                keyExtractor={(item, index) => index.toString()}
-                sections={getSectionData(coin as ICrypto)}
-                style={styles.section}
-                renderItem={({ item }) => 
-                    <View style={styles.sectionItem}>
-                        <Text style={styles.itemText}>{item}</Text>
-                    </View> 
-                }
-                renderSectionHeader={({ section }) => 
-                    <View style={styles.sectionHeader}>
-                        <Text style={styles.sectionText}>{section.title}</Text>
+            {
+                !loading 
+                ? <ActivityIndicator color='#fff' size='large' style={styles.loader}/>
+                : (
+                    <View>
+                        <View style={styles.subHeader}>
+                            <Image 
+                                style={styles.img} 
+                                source={{ uri: getSymbolIcon(coin?.name || '') }}
+                            />
+                            <Text style={styles.titleText}> { coin?.name } </Text>
+                        </View>
+                        <SectionList
+                            keyExtractor={(_, index) => index.toString()}
+                            sections={getSectionData(coin as ICrypto)}
+                            style={styles.section}
+                            renderItem={({ item }) => 
+                                <View style={styles.sectionItem}>
+                                    <Text style={styles.itemText}>{item}</Text>
+                                </View> 
+                            }
+                            renderSectionHeader={({ section }) => 
+                                <View style={styles.sectionHeader}>
+                                    <Text style={styles.sectionText}>{section.title}</Text>
+                                </View>
+                            }
+                        />
+                        <Text> Markets </Text>
+                        <FlatList 
+                            horizontal={true}
+                            style={styles.list}
+                            data={markets}
+                            keyExtractor={(_, index) => index.toString()}
+                            renderItem={({ item }) => <CoinDetailItem item={item}/>}
+                        />
                     </View>
-                }
-            />
-            <Text> Markets </Text>
-            <FlatList 
-                horizontal={true}
-                style={styles.list}
-                data={markets}
-                keyExtractor={(item, index) => index.toString()}
-                renderItem={({item}) => <CoinDetailItem item={item}/>}
-            />
+                )
+            }
         </View>
     )
 }
@@ -124,8 +135,12 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10,
         marginRight: 6
     },
+    loader: {
+        justifyContent: 'center',
+        flex: 1,
+    },
     subHeader: {
-        backgroundColor: "rgba(0,0,0, .1)",
+        backgroundColor: 'rgba(0,0,0, .1)',
         padding: 10,
         flexDirection: 'row'
     },
@@ -140,7 +155,7 @@ const styles = StyleSheet.create({
         height: 25
     },
     sectionHeader: {
-        backgroundColor: "rgba(0,0,0, .2)",
+        backgroundColor: 'rgba(0,0,0, .2)',
         padding: 8,
     },
     sectionItem: {
