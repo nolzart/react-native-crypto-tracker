@@ -11,6 +11,7 @@ import { RouteProp } from '@react-navigation/native'
 import Colors from '../../res/colors'
 import CoinsItem from './CoinsItem'
 import { ICrypto } from '../../types/Coins'
+import CoinsSearch from './CoinsSearch'
 
 type CoinsStackParamList = {
     Coins: undefined;
@@ -31,21 +32,35 @@ interface Props {
 
 const CoinsScreen: React.FC<Props>  = (props) => {
 
-    const [coins, setCoins] = useState<Array<ICrypto>>()
+    const [coins, setCoins] = useState<Array<ICrypto>>([])
+    const [allCoins, setAllCoins] = useState<Array<ICrypto>>([])
     const [loading, setLoading] = useState<Boolean>(false)
 
     useEffect(() => {
         const unsubscribe = async () => {
             setLoading(true)
-            const res = await fetch('https://api.coinlore.net/api/tickers/');
-            const { data }: { data?: Array<ICrypto> } = await res.json();
-            setCoins(data || []);
+            await getCoins()
             setLoading(false)
         }
 
         unsubscribe()
     }, [])
 
+    const getCoins = async () => {
+        const res = await fetch('https://api.coinlore.net/api/tickers/');
+        const { data }: { data: Array<ICrypto> } = await res.json();
+        setAllCoins(data)
+        setCoins(data);
+    }
+
+    const handleSearch = (query: string) => {
+        const coinsFiltered = allCoins.filter(coin => 
+                coin.name.toLowerCase().includes(query.toLowerCase()) || 
+                coin.symbol.toLowerCase().includes(query.toLowerCase())
+            )
+
+        setCoins(coinsFiltered)
+    }
 
     const handlePress = (coin: ICrypto) => {
         props.navigation.navigate('CoinDetail', {coin})
@@ -53,16 +68,18 @@ const CoinsScreen: React.FC<Props>  = (props) => {
 
     return (
         <View style={styles.container}>
+            <CoinsSearch handleSearch={handleSearch} />
             {
                 loading ? (
                         <ActivityIndicator color='#fff' size='large' style={styles.center}/>
                 ): (
                     <FlatList 
                         data={coins}
-                        renderItem={({item}) => <CoinsItem 
-                                                    item={item} 
-                                                    onPress={() => handlePress(item)}
-                                                />
+                        renderItem={({item}) => 
+                            <CoinsItem 
+                                item={item} 
+                                onPress={() => handlePress(item)}
+                            />
                         }
                     />
                 )
@@ -81,20 +98,6 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
     },
-    titleText: {
-        color: Colors.white,
-        textAlign: 'center',
-    },
-    btn: {
-        padding: 8,
-        backgroundColor: 'blue',
-        borderRadius: 8,
-        margin: 16
-    },
-    btnText: {
-        color: Colors.white,
-        textAlign: 'center'
-    }
 })
 
 export default CoinsScreen;
