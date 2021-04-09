@@ -1,13 +1,22 @@
 import React from 'react'
-import { View, Text, StyleSheet, Image, ImageSourcePropType } from 'react-native'
+import { 
+    View, 
+    Text, 
+    StyleSheet, 
+    Image, 
+    ImageSourcePropType, 
+    Pressable, 
+    GestureResponderEvent 
+} from 'react-native'
 import { ICrypto } from '../../types/Coins'
 import Colors from '../../res/colors'
 
 interface Props {
     item: ICrypto;
+    onPress: (event: GestureResponderEvent) => void;
 }
 
-const CoinsItem: React.FC<Props> = ({ item }) => {
+const CoinsItem: React.FC<Props> = ({ item, onPress }) => {
 
     const getImgArrow = (): ImageSourcePropType => {
         if(Number(item.percent_change_1h) > 0) 
@@ -17,7 +26,7 @@ const CoinsItem: React.FC<Props> = ({ item }) => {
     }
 
     return (
-        <View style={styles.container}>
+        <Pressable style={styles.container} onPress={onPress}>
             <View style={styles.row}>
                 <Text style={styles.symbolText}>{item.symbol}</Text>
                 <Text style={styles.nameText}>{item.name}</Text>
@@ -27,7 +36,7 @@ const CoinsItem: React.FC<Props> = ({ item }) => {
                 <Text style={styles.percentText}>{`${item.percent_change_1h}%`}</Text>
                 <Image style={styles.imgIcon} source={getImgArrow()}/>
             </View>
-        </View>
+        </Pressable>
     )
 }
 
