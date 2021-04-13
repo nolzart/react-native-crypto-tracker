@@ -39,13 +39,9 @@ Or run <code>npm run android</code> or <code>npm run ios</code> to run an emulat
       <img src='./assets/github/home.jpeg' width='150'/>
     <p>
     <p>Search cryptocurrencies</p>
-    <video width='150' height='350' 
-      autoplay='true'
-      loop='true'>
-        <source src="./assets/github/filtering.mp4"
-            type="video/mp4">
-        Sorry, your browser doesn't support embedded videos.
-      </video>
+    <p align='center'>
+      <img src='./assets/github/filtering.gif' width='150'/>
+    </p>
   </li>
   <li>
     <h3>Crypto Details</h3>
@@ -57,25 +53,13 @@ Or run <code>npm run android</code> or <code>npm run ios</code> to run an emulat
       A horizontal list that shows the markets where the cryptocurrency is allowed.
     </p>
     <p align='center'>
-      <video width='150' height='350' 
-      autoplay='true'
-      loop='true'>
-        <source src="./assets/github/horizontal-list.mp4"
-            type="video/mp4">
-        Sorry, your browser doesn't support embedded videos.
-      </video>
+      <img src='./assets/github/horizontal-list.gif' width='150'/>
     </p>
     <p>
       You can add and remove the cryptocurrency from favorites.
     </p>
     <p align='center'>
-      <video width='150' height='350' 
-      autoplay='true'
-      loop='true'>
-        <source src="./assets/github/add-remove-favorites.mp4"
-            type="video/mp4">
-        Sorry, your browser doesn't support embedded videos.
-      </video>
+     <img src='./assets/github/add-remove-favorites.gif' width='150'/>
     </p>
   </li>
   <li>
@@ -90,5 +74,4 @@ Or run <code>npm run android</code> or <code>npm run ios</code> to run an emulat
 <h1>Acknowledgement</h1>
 
 <p>This app was built following the react-native course on platzi, thanks to <a href='https://twitter.com/alesanabriav' target='_blank'>@alesanabriav</a> and <a href='https://platzi.com/' target='_blank'>platzi</a> for such a good course.</p>
-
 
